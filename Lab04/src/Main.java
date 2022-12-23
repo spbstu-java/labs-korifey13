@@ -10,7 +10,7 @@ import java.util.List;
 //     сколько указано в параметре аннотации: вызываем из Main
 
 public class Main {
-    public static void main(String[] args) throws InvocationTargetException, IllegalAccessException {
+    public static void main(String[] args) { // throws InvocationTargetException, IllegalAccessException {
         TestClass testClass = new TestClass();  // Экземпляр класса с аннотированными и неаннотироваными методами
         Class<? extends TestClass> extClass = testClass.getClass();
         // Список методов унаследованных расширенным классом, т.е. публичных
@@ -26,8 +26,11 @@ public class Main {
                 method.setAccessible(true);  // Обход проверок доступа для запуска приватных и защищённых методов
                 RunCountAnnotation annotation = method.getAnnotation(RunCountAnnotation.class);
                 // Вызываем столько раз, какое число в параметре аннотации
-                for (int i = 0; i < annotation.value(); i++) {
-                    method.invoke(testClass);
+                try {
+                    for (int i = 0; i < annotation.value(); i++)
+                        method.invoke(testClass);
+                } catch (InvocationTargetException | IllegalAccessException e) {
+                    System.out.println("Ошибочка вышла: " + e.getMessage());
                 }
             }
         }
